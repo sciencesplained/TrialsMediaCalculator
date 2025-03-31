@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clinical Trial Recruitment Cost Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <div style="max-width:800px; padding:10px;">
+    <h3>Clinical Trial Recruitment Cost Calculator</h3>
+
+    <label>🎯 Target Participants:
+      <input type="number" id="targetParticipants" value="100" />
+    </label><br>
+    <label>🕐 Recruitment Duration (months):
+      <input type="number" id="recruitmentMonths" value="10" />
+    </label><br>
+    <label>💸 Staff Cost per Month (£):
+      <input type="number" id="staffCostPerMonth" value="5000" />
+    </label><br>
+    <label>👥 Staff Time (FTE):
+      <input type="number" step="0.1" id="fte" value="1.0" />
+    </label><br>
+    <label>🧪 Screen Failure Rate (%):
+      <input type="number" id="screenFailure" value="40" />
+    </label><br>
+    <label>🧍‍♂️ Drop-out Rate (%):
+      <input type="number" id="dropoutRate" value="15" />
+    </label><br>
+    <label>💷 Incentive per Participant (£):
+      <input type="number" id="incentivePerParticipant" value="50" />
+    </label><br>
+    <label>🏥 Number of Sites:
+      <input type="number" id="siteCount" value="1" />
+    </label><br>
+    <label>🧾 Site Setup Cost per Site (£):
+      <input type="number" id="siteSetupCost" value="5000" />
+    </label><br>
+    <label>🏢 Include Facilities/Overhead (25%)?
+      <input type="checkbox" id="includeOverhead" checked />
+    </label><br><br>
+
+    <button onclick="calculateMain()">Calculate Recruitment Costs</button><br><br>
+    <div id="mainResult"></div>
+
+    <h2>📥 Download Your Report</h2>
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
