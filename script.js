@@ -1,4 +1,3 @@
-
 function calculateMain() {
   const target = parseFloat(document.getElementById('targetParticipants').value);
   const months = parseFloat(document.getElementById('recruitmentMonths').value);
@@ -31,11 +30,84 @@ function calculateMain() {
     📊 Cost per recruited participant: <strong>£${costPerRecruited.toFixed(2)}</strong><br>
     🧍‍♂️ Cost per retained participant: <strong>£${costPerRetained.toFixed(2)}</strong><br>
   `;
+
+  document.getElementById("costBreakdown").innerHTML = `
+    <h4>💡 Cost Breakdown Summary</h4>
+    <ul>
+      <li><strong>Staff Cost (incl. overhead):</strong> £${Math.round(totalStaffCost).toLocaleString()}</li>
+      <li><strong>Participant Incentives:</strong> £${Math.round(totalIncentives).toLocaleString()}</li>
+      <li><strong>Site Setup Costs:</strong> £${Math.round(totalSiteCost).toLocaleString()}</li>
+    </ul>
+  `;
+
+  document.getElementById("roiSection").style.display = "block";
+}
+
+function calculateROI() {
+  const months = parseFloat(document.getElementById('recruitmentMonths').value);
+  const staffCost = parseFloat(document.getElementById('staffCostPerMonth').value);
+  const fte = parseFloat(document.getElementById('fte').value);
+  const investment = parseFloat(document.getElementById('investment').value);
+  const boost = parseFloat(document.getElementById('impact').value);
+
+  const baseDuration = months;
+  const extensionCosts = [0, 6000, 18000];
+  const extendedDurations = [baseDuration, baseDuration + 1, baseDuration + 3];
+  const noMediaCosts = extendedDurations.map((d, i) => d * staffCost * fte + extensionCosts[i]);
+  const withMediaDurations = extendedDurations.map(d => d / (1 + boost));
+  const withMediaCosts = withMediaDurations.map(d => d * staffCost * fte + investment);
+  const savings = noMediaCosts.map((cost, i) => cost - withMediaCosts[i]);
+
+  document.getElementById("roiResult").innerHTML = `
+    💡 Media investment of <strong>£${investment}</strong> at <strong>${Math.round(boost * 100)}%</strong> efficiency gain.<br>
+    🎯 Target recruitment duration: <strong>${months} months</strong><br>
+  `;
+
+  renderScenarioTable(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
+}
+
+function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
+  const labels = ["On-Time", "+1 Month", "+3 Months"];
+  const rows = labels.map((label, i) => {
+    return `<tr>
+      <td>${label}</td>
+      <td>${baseDurations[i].toFixed(1)} mo</td>
+      <td>£${Math.round(baseCosts[i]).toLocaleString()}</td>
+      <td>${mediaDurations[i].toFixed(1)} mo</td>
+      <td>£${Math.round(mediaCosts[i]).toLocaleString()}</td>
+      <td>£${Math.round(savings[i]).toLocaleString()}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("scenarioTable").innerHTML = `
+    <h4>📊 Scenario Comparison Table</h4>
+    <table style="width:100%;border-collapse:collapse;text-align:left;">
+      <thead>
+        <tr style="background:#f0f0f0;">
+          <th>Scenario</th>
+          <th>Duration (No Media)</th>
+          <th>Cost (No Media)</th>
+          <th>Duration (With Media)</th>
+          <th>Cost (With Media)</th>
+          <th>Savings</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
 
 function downloadPDF() {
+  const content = `
+    <h2>Recruitment Summary</h2>
+    ${document.getElementById("mainResult").innerHTML}
+    ${document.getElementById("costBreakdown").innerHTML}
+    ${document.getElementById("roiResult").innerHTML}
+    ${document.getElementById("scenarioTable").innerHTML}
+  `;
+
   const element = document.createElement('div');
-  element.innerHTML = document.getElementById("mainResult").innerHTML || "<p>No calculation done yet.</p>";
+  element.innerHTML = content;
 
   html2pdf().from(element).set({
     filename: 'Recruitment_Summary.pdf',
