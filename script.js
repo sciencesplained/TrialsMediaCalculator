@@ -188,6 +188,7 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 
 
 
+
 function downloadPDF() {
   const content = `
     <h2>Recruitment Summary</h2>
