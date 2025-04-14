@@ -64,6 +64,8 @@ function calculateROI() {
   `;
 
   renderScenarioTable(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
+  drawChart(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
+
 }
 
 function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
@@ -95,6 +97,62 @@ function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCost
       <tbody>${rows}</tbody>
     </table>
   `;
+}
+function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
+  const ctx = document.getElementById('timelineChart').getContext('2d');
+  if (window.recruitChart) window.recruitChart.destroy(); // clear old chart
+
+  const labels = ["On-Time", "+1 Month", "+3 Months"];
+  window.recruitChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Without Media',
+          data: baseDurations,
+          backgroundColor: '#d62728'
+        },
+        {
+          label: 'With Media',
+          data: mediaDurations,
+          backgroundColor: '#2ca02c'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const index = context.dataIndex;
+              const isMedia = context.dataset.label.includes("With");
+              const duration = isMedia ? mediaDurations[index] : baseDurations[index];
+              const cost = isMedia ? mediaCosts[index] : baseCosts[index];
+              const saved = isMedia ? ` (Saves £${Math.round(savings[index]).toLocaleString()})` : '';
+              return `${context.dataset.label}: ${duration.toFixed(1)} months, £${Math.round(cost).toLocaleString()}${saved}`;
+            }
+          }
+        },
+        legend: { position: 'top' },
+        title: {
+          display: true,
+          text: 'Recruitment Timeline Comparison'
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Months'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
 }
 
 function downloadPDF() {
