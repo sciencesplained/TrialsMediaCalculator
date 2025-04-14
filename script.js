@@ -207,18 +207,31 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 
 
 function downloadPDF() {
-  const content = `
-    <h2>Recruitment Summary</h2>
-    ${document.getElementById("mainResult").innerHTML}
-    ${document.getElementById("costBreakdown").innerHTML}
-    ${document.getElementById("roiResult").innerHTML}
-    ${document.getElementById("scenarioTable").innerHTML}
-  `;
+  // Create a container and clone the relevant sections
+  const content = document.createElement('div');
+  content.style.padding = '20px';
+  content.style.fontFamily = 'Arial, sans-serif';
 
-  const element = document.createElement('div');
-  element.innerHTML = content;
+  const heading = document.createElement('h2');
+  heading.textContent = 'Recruitment Summary';
+  content.appendChild(heading);
 
-  html2pdf().from(element).set({
+  const sections = [
+    document.getElementById("mainResult"),
+    document.getElementById("costBreakdown"),
+    document.getElementById("roiResult"),
+    document.getElementById("scenarioTable")
+  ];
+
+  sections.forEach(section => {
+    if (section && section.innerHTML.trim() !== "") {
+      const clone = section.cloneNode(true);
+      content.appendChild(clone);
+    }
+  });
+
+  // Use html2pdf to export the content
+  html2pdf().from(content).set({
     filename: 'Recruitment_Summary.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
