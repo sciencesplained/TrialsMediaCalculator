@@ -130,19 +130,21 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
     options: {
       responsive: true,
       indexAxis: 'y',
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const idx = context.dataIndex;
-              const isMedia = context.dataset.label === "With Media";
-              const duration = isMedia ? mediaDurations[idx] : baseDurations[idx];
-              const cost = isMedia ? mediaCosts[idx] : baseCosts[idx];
-              const saved = isMedia ? ` (Saves £${Math.round(savings[idx]).toLocaleString()})` : '';
-              return `${context.dataset.label}: ${duration.toFixed(1)} months, £${Math.round(cost).toLocaleString()}${saved}`;
-            }
-          }
-        },
+  plugins: {
+  tooltip: {
+    callbacks: {
+      label: function(context) {
+        const idx = context.dataIndex;
+        const isMedia = context.dataset.label === "With Media";
+
+        const duration = isMedia ? window._chartMediaDurations[idx] : window._chartBaseDurations[idx];
+        const cost = isMedia ? window._chartMediaCosts[idx] : window._chartBaseCosts[idx];
+        const saved = isMedia ? ` (Saves £${Math.round(window._chartSavings[idx]).toLocaleString()})` : '';
+
+        return `${context.dataset.label}: ${duration.toFixed(1)} months, £${Math.round(cost).toLocaleString()}${saved}`;
+      }
+    }
+  },
         title: {
           display: true,
           text: 'Recruitment Timeline Comparison'
