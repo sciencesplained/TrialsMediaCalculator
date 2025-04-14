@@ -207,39 +207,19 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 
 
 function downloadPDF() {
-  // Get result sections
-  const mainResult = document.getElementById("mainResult");
-  const costBreakdown = document.getElementById("costBreakdown");
-  const roiResult = document.getElementById("roiResult");
-  const scenarioTable = document.getElementById("scenarioTable");
+  const printableElement = document.getElementById('printableContent');
 
-  // Create temporary wrapper to hold content for PDF
-  const printContainer = document.createElement('div');
-  printContainer.style.padding = '20px';
-  printContainer.style.fontFamily = 'Arial, sans-serif';
-  printContainer.innerHTML = `
-    <h2>Recruitment Summary</h2>
-    <div>${mainResult?.innerHTML || ''}</div>
-    <div>${costBreakdown?.innerHTML || ''}</div>
-    <div>${roiResult?.innerHTML || ''}</div>
-    <div>${scenarioTable?.innerHTML || ''}</div>
-  `;
+  if (!printableElement || printableElement.innerText.trim() === "") {
+    alert("Please calculate results first before downloading the PDF.");
+    return;
+  }
 
-  // Append it to the DOM invisibly so html2pdf can render it
-  document.body.appendChild(printContainer);
-  printContainer.style.display = 'block';
-  printContainer.style.position = 'absolute';
-  printContainer.style.left = '-9999px';
-
-  // Generate PDF
-  html2pdf().from(printContainer).set({
+  html2pdf().set({
     filename: 'Recruitment_Summary.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).save().then(() => {
-    // Clean up after saving
-    printContainer.remove();
-  });
+  }).from(printableElement).save();
 }
+
