@@ -99,6 +99,11 @@ function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCost
   `;
 }
 function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
+  window._chartBaseDurations = baseDurations;
+  window._chartMediaDurations = mediaDurations;
+  window._chartBaseCosts = baseCosts;
+  window._chartMediaCosts = mediaCosts;
+  window._chartSavings = savings;
   const ctx = document.getElementById('timelineChart').getContext('2d');
   console.log("Chart drawing initiated");
   if (window.recruitChart) window.recruitChart.destroy();
