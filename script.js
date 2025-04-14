@@ -99,17 +99,24 @@ function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCost
   `;
 }
 function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
+  const ctx = document.getElementById('timelineChart').getContext('2d');
+
+  // Destroy existing chart if it exists
+  if (window.recruitChart) window.recruitChart.destroy();
+
+  // Define scenario labels
+  const labels = ["On-Time Scenario", "1 Month Late Scenario", "3 Months Late Scenario"];
+
+  // Store global data for tooltip access
   window._chartBaseDurations = baseDurations;
   window._chartMediaDurations = mediaDurations;
   window._chartBaseCosts = baseCosts;
   window._chartMediaCosts = mediaCosts;
   window._chartSavings = savings;
-  const ctx = document.getElementById('timelineChart').getContext('2d');
-  console.log("Chart drawing initiated");
-  if (window.recruitChart) window.recruitChart.destroy();
+  window._chartLabels = labels;
+  window._chartTargetDuration = baseDurations[0]; // "On-Time" baseline
 
-  const labels = ["On-Time", "+1 Month", "+3 Months"];
-
+  // Create the chart
   window.recruitChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -130,21 +137,34 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
     options: {
       responsive: true,
       indexAxis: 'y',
-  plugins: {
-  tooltip: {
-    callbacks: {
-      label: function(context) {
-        const idx = context.dataIndex;
-        const isMedia = context.dataset.label === "With Media";
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const idx = context.dataIndex;
+              const isMedia = context.dataset.label === "With Media";
+              const scenarioLabel = window._chartLabels[idx];
 
-        const duration = isMedia ? window._chartMediaDurations[idx] : window._chartBaseDurations[idx];
-        const cost = isMedia ? window._chartMediaCosts[idx] : window._chartBaseCosts[idx];
-        const saved = isMedia ? ` (Saves £${Math.round(window._chartSavings[idx]).toLocaleString()})` : '';
+              const duration = isMedia ? window._chartMediaDurations[idx] : window._chartBaseDurations[idx];
+              const cost = isMedia ? window._chartMediaCosts[idx] : window._chartBaseCosts[idx];
+              const saved = isMedia ? ` (Saves £${Math.round(window._chartSavings[idx]).toLocaleString()})` : '';
 
-        return `${context.dataset.label}: ${duration.toFixed(1)} months, £${Math.round(cost).toLocaleString()}${saved}`;
-      }
-    }
-  },
+              if (!isMedia) {
+                // Tooltip for "Without Media"
+                return `${scenarioLabel}: ${duration.toFixed(1)} months, £${Math.round(cost).toLocaleString()}`;
+              } else {
+                // Tooltip for "With Media"
+                const target = window._chartTargetDuration;
+                const timeDiff = target - duration;
+                const timingPhrase = timeDiff > 0
+                  ? `${Math.abs(timeDiff.toFixed(1))} months early`
+                  : `only ${Math.abs(timeDiff.toFixed(1))} months late`;
+
+                return `${scenarioLabel} with Media: ${duration.toFixed(1)} months (${timingPhrase}), £${Math.round(cost).toLocaleString()}${saved}`;
+              }
+            }
+          }
+        },
         title: {
           display: true,
           text: 'Recruitment Timeline Comparison'
@@ -165,6 +185,7 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
     }
   });
 }
+
 
 
 function downloadPDF() {
