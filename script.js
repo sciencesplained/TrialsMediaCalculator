@@ -64,8 +64,8 @@ function calculateROI() {
   `;
 
   renderScenarioTable(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
+  console.log("Chart drawing initiating");
   drawChart(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
-
 }
 
 function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
@@ -100,9 +100,11 @@ function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCost
 }
 function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
   const ctx = document.getElementById('timelineChart').getContext('2d');
-  if (window.recruitChart) window.recruitChart.destroy(); // clear old chart
+  console.log("Chart drawing initiated");
+  if (window.recruitChart) window.recruitChart.destroy();
 
   const labels = ["On-Time", "+1 Month", "+3 Months"];
+
   window.recruitChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -127,26 +129,28 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
         tooltip: {
           callbacks: {
             label: function(context) {
-              const index = context.dataIndex;
-              const isMedia = context.dataset.label.includes("With");
-              const duration = isMedia ? mediaDurations[index] : baseDurations[index];
-              const cost = isMedia ? mediaCosts[index] : baseCosts[index];
-              const saved = isMedia ? ` (Saves £${Math.round(savings[index]).toLocaleString()})` : '';
+              const idx = context.dataIndex;
+              const isMedia = context.dataset.label === "With Media";
+              const duration = isMedia ? mediaDurations[idx] : baseDurations[idx];
+              const cost = isMedia ? mediaCosts[idx] : baseCosts[idx];
+              const saved = isMedia ? ` (Saves £${Math.round(savings[idx]).toLocaleString()})` : '';
               return `${context.dataset.label}: ${duration.toFixed(1)} months, £${Math.round(cost).toLocaleString()}${saved}`;
             }
           }
         },
-        legend: { position: 'top' },
         title: {
           display: true,
           text: 'Recruitment Timeline Comparison'
+        },
+        legend: {
+          position: 'top'
         }
       },
       scales: {
         x: {
           title: {
             display: true,
-            text: 'Months'
+            text: 'Recruitment Duration (months)'
           },
           beginAtZero: true
         }
@@ -154,6 +158,7 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
     }
   });
 }
+
 
 function downloadPDF() {
   const content = `
