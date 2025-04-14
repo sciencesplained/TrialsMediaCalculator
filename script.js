@@ -69,7 +69,7 @@ function calculateROI() {
 }
 
 function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
-  const labels = ["On-Time", "+1 Month", "+3 Months"];
+  const labels = ["On-Time Scenario", "1 Month Late Scenario", "3 Months Late Scenario"];
   const rows = labels.map((label, i) => {
     return `<tr>
       <td>${label}</td>
