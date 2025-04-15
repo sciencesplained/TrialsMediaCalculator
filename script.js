@@ -206,16 +206,28 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 }
 
 function downloadPDF() {
-  const content = document.createElement('div');
-  content.innerHTML = `<h1>Hello Adam</h1><p>This is a test from inside the live calculator.</p>`;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = `
+    <div style="font-family: Arial; padding: 20px;">
+      <h1>Hello Adam</h1>
+      <p>This is a working PDF test inside your actual calculator code.</p>
+    </div>
+  `;
 
-  html2pdf().from(content).set({
-    filename: 'Hello_Adam_From_Calculator.pdf',
+  document.body.appendChild(tempDiv); // ensure it renders
+
+  html2pdf().set({
+    filename: 'Hello_Adam.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).save();
+  })
+  .from(tempDiv)
+  .save()
+  .then(() => {
+    document.body.removeChild(tempDiv); // clean up after save
+  });
 }
 
 
