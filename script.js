@@ -206,22 +206,16 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 }
 
 function downloadPDF() {
-  const content = document.getElementById('reportContent');
+  const content = document.createElement('div');
+  content.innerHTML = `<h1>Hello Adam</h1><p>This is a test from inside the live calculator.</p>`;
 
-  if (!content || content.innerText.trim() === '') {
-    alert("Please calculate the results first before exporting.");
-    return;
-  }
-
-  const opt = {
-    filename: 'Recruitment_Summary.pdf',
+  html2pdf().from(content).set({
+    filename: 'Hello_Adam_From_Calculator.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  html2pdf().from(content).set(opt).save();
+  }).save();
 }
 
 
