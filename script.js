@@ -206,23 +206,32 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 }
 
 function downloadPDF() {
-  console.log("downloadPDF triggered");
-
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = `<h1>Hello Adam</h1><p>This is a test.</p>`;
-  document.body.appendChild(tempDiv);
-
-  html2pdf().from(tempDiv).set({
+  // Create a temporary container with visible content
+  const tempContainer = document.createElement('div');
+  tempContainer.style.fontFamily = 'Arial, sans-serif';
+  tempContainer.style.padding = '20px';
+  tempContainer.style.backgroundColor = '#fff'; // white background for PDF
+  tempContainer.innerHTML = `
+    <h1>Hello Adam</h1>
+    <p>This is a test of the PDF generation inside the calculator environment.</p>
+  `;
+  
+  // Append it to the body so html2pdf can capture it
+  document.body.appendChild(tempContainer);
+  
+  // Use html2pdf to generate the PDF from the temporary container
+  html2pdf().from(tempContainer).set({
     filename: 'Hello_Adam.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }).save().then(() => {
-    console.log("PDF generated");
-    document.body.removeChild(tempDiv);
-  }).catch(err => {
-    console.error("PDF generation error:", err);
+    // Remove the temporary container after saving
+    document.body.removeChild(tempContainer);
+    console.log("PDF generated with content: 'Hello Adam'");
+  }).catch((error) => {
+    console.error("Error generating PDF:", error);
   });
 }
 
