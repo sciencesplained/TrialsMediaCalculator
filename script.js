@@ -205,21 +205,23 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
   });
 }
 
-
 function downloadPDF() {
-  const printableElement = document.getElementById('printableContent');
+  const content = document.getElementById('reportContent');
 
-  if (!printableElement || printableElement.innerText.trim() === "") {
-    alert("Please calculate results first before downloading the PDF.");
+  if (!content || content.innerText.trim() === '') {
+    alert("Please calculate the results first before exporting.");
     return;
   }
 
-  html2pdf().set({
+  const opt = {
     filename: 'Recruitment_Summary.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).from(printableElement).save();
+  };
+
+  html2pdf().from(content).set(opt).save();
 }
+
 
