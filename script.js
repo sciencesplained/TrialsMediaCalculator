@@ -206,28 +206,23 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
 }
 
 function downloadPDF() {
+  console.log("downloadPDF triggered");
+
   const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = `
-    <div style="font-family: Arial; padding: 20px;">
-      <h1>Hello Adam</h1>
-      <p>This is a working PDF test inside your actual calculator code.</p>
-    </div>
-  `;
+  tempDiv.innerHTML = `<h1>Hello Adam</h1><p>This is a test.</p>`;
+  document.body.appendChild(tempDiv);
 
-  document.body.appendChild(tempDiv); // ensure it renders
-
-  html2pdf().set({
+  html2pdf().from(tempDiv).set({
     filename: 'Hello_Adam.pdf',
     margin: 10,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  })
-  .from(tempDiv)
-  .save()
-  .then(() => {
-    document.body.removeChild(tempDiv); // clean up after save
+  }).save().then(() => {
+    console.log("PDF generated");
+    document.body.removeChild(tempDiv);
+  }).catch(err => {
+    console.error("PDF generation error:", err);
   });
 }
-
 
