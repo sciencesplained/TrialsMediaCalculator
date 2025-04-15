@@ -77,6 +77,7 @@
     <label>🏢 Include Facilities/Overhead (25%)? <input type="checkbox" id="includeOverhead" checked /></label><br><br>
 
     <button onclick="calculateMain()">Calculate Recruitment Costs</button><br><br>
+  <div id="printableContent">
     <div id="mainResult"></div>
     <div id="costBreakdown" style="margin-top:20px;"></div>
 
@@ -103,16 +104,11 @@
       <canvas id="timelineChart" width="700" height="400" style="margin-top:20px;"></canvas>
       <div id="scenarioTable" style="margin-top:20px;"></div>
     </div>
+    </div>
 
-    <h2>📥 Download Your Report 3</h2>
+    <h2>📥 Download Your Report 4</h2>
     <button onclick="downloadPDF()">Download PDF</button>
   </div>
-  <div id="printableContent">
-  <div id="mainResult"></div>
-  <div id="costBreakdown" style="margin-top:20px;"></div>
-  <div id="roiResult"></div>
-  <div id="scenarioTable" style="margin-top:20px;"></div>
-</div>
 
   <script src="script.js"></script>
 </body>
