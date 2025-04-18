@@ -7,141 +7,123 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Load html2pdf from an external CDN -->
+  <script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
   <style> 
-  .ref-hover {
-    position: relative;
-    text-decoration: underline;
-    color: #0645AD;
-  }
+    .ref-hover {
+      position: relative;
+      text-decoration: underline;
+      color: #0645AD;
+    }
+    .ref-hover .hover-img {
+      display: none;
+      position: absolute;
+      top: 1.5em;
+      left: 0;
+      z-index: 10;
+      width: 600px;
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 5px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .ref-hover:hover .hover-img {
+      display: block;
+    }
+    /* Ensure the report container is visible and has a size */
 
-  .ref-hover .hover-img {
-    display: none;
-    position: absolute;
-    top: 1.5em;
-    left: 0;
-    z-index: 10;
-    width: 600px;
-    border: 1px solid #ccc;
-    background: #fff;
-    padding: 5px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-
-  .ref-hover:hover .hover-img {
-    display: block;
-  }
-</style>
+  </style>
 </head>
 <body>
-  <div style="max-width:800px; padding:10px;">
-    <h3>Clinical Trial Recruitment Cost Calculator</h3>
+  <div style="max-width:800px; padding:10px; margin:0 auto;">
+    <!-- The container that holds the content for the PDF (this should be the element we export) -->
+    <div id="reportContent" style="border:1px solid #ccc;padding:10px;background:white;">
+        <div class="banner">
+            <h1 class="banner-title">Clinical Trial Recruitment Cost Calculator</h1>
+            <img src="logoWithLettering.png" alt="Company Logo"
+            class="banner-logo"
+            width="120" />
+        </div>
 
-    <p style="background:#eef;padding:10px;border-radius:6px;margin-bottom:20px;">
-      This tool estimates the true cost of recruiting participants into clinical trials — including staff, site setup, dropouts, and incentives. It helps planners assess the <strong>Return on Investment (ROI)</strong> of media investments such as explainer videos and digital outreach.
-      <br><br>
-      Results are based on your inputs, with assumptions informed by:
-      <ul style="margin-left:20px;">
-        <li><strong>Screen failure rates:</strong> 30–50% — see 
-  <a href="http://dx.doi.org/10.1136/bmjopen-2016-015276" 
-     target="_blank" 
-     class="ref-hover">
-    Walters et al., 2017 (NIHR HTA);  60% of trials fail to achieve recruitment target!
-    <img src="Waltersetal.2017.table7.png" alt="Walters Study Preview" class="hover-img">
-  </a>
-        </li>
-        <li><strong>Dropout rates:</strong> 10–20% — commonly assumed in planning</li>
-        <li><strong>Site setup costs:</strong> £3,000–£7,000 — based on NIHR interactive costing tool</li>
-        <li><strong>Staff costs:</strong> ~£5,000/month — NHS Band 6–7 averages</li>
-        <li><strong>Overhead multiplier:</strong> 25% — standard for indirects (e.g., facilities, utilities)</li>
-        <li><strong>Cost of delays:</strong> Recruitment delays are common — 45% of studies receive an extension of some kind.
-          <a href="https://link.springer.com/article/10.1186/1745-6215-14-166"
-            target="_blank"
-            class="ref-hover">
-            Sully et al. (2013) Trials.
-            <img src="Sully2013.png" alt="Sully Study Preview" class="hover-img">
-            </a></li>
-        
-      </ul>
-      You can customise any value to match your trial plan. Adjustments for screen failures and dropouts ensure per-participant costs reflect actual resource use. 
-    </p>
+            <p style="background:#eef;padding:10px;border-radius:6px;margin-bottom:20px;">
+                This tool estimates the true cost of recruiting participants into clinical trials — including staff, site setup, dropouts, and incentives. It helps planners assess the <strong>Return on Investment (ROI)</strong> of media investments such as explainer videos and digital outreach.
+                <br><br>
+                Results are based on your inputs, with assumptions informed by:
+                <ul style="margin-left:20px;">
+                    <li><strong>Screen failure rates:</strong> 30–50% — see 
+                        <a href="https://dx.doi.org/10.1136/bmjopen-2016-015276" target="_blank" class="ref-hover">
+                             Walters et al., 2017 (NIHR HTA); 60% of trials fail to achieve recruitment target!
+                            <img src="Waltersetal.2017.table7.png" alt="Walters Study Preview" class="hover-img">
+                        </a>
+                 </li>
+                    <li><strong>Dropout rates:</strong> 10–20% — commonly assumed in planning</li>
+                    <li><strong>Site setup costs:</strong> £3,000–£7,000 — based on NIHR interactive costing tool</li>
+                    <li><strong>Staff costs:</strong> ~£5,000/month — NHS Band 6–7 averages</li>
+                    <li><strong>Overhead multiplier:</strong> 25% — standard for indirects (e.g., facilities, utilities)</li>
+                    <li><strong>Cost of delays:</strong> Recruitment delays are common — 45% of studies receive an extension of some kind.
+                        <a href="https://link.springer.com/article/10.1186/1745-6215-14-166" target="_blank" class="ref-hover">
+                            Sully et al. (2013) Trials.
+                            <img src="Sully2013.png" alt="Sully Study Preview" class="hover-img">
+                        </a>
+                    </li>
+                </ul>
+                You can customise any value to match your trial plan. Adjustments for screen failures and dropouts ensure per-participant costs reflect actual resource use.
+            </p>
 
-    <label>🎯 Target Participants: <input type="number" id="targetParticipants" value="100" /></label><br>
-    <label>🕐 Recruitment Duration (months): <input type="number" id="recruitmentMonths" value="10" /></label><br>
-    <label>💸 Staff Cost per Month (£): <input type="number" id="staffCostPerMonth" value="5000" /></label><br>
-    <label>👥 Staff Time (FTE): <input type="number" step="0.1" id="fte" value="1.0" /></label><br>
-    <label>🧪 Screen Failure Rate (%): <input type="number" id="screenFailure" value="40" /></label><br>
-    <label>🧍‍♂️ Drop-out Rate (%): <input type="number" id="dropoutRate" value="15" /></label><br>
-    <label>💷 Incentive per Participant (£): <input type="number" id="incentivePerParticipant" value="50" /></label><br>
-    <label>🏥 Number of Sites: <input type="number" id="siteCount" value="1" /></label><br>
-    <label>🧾 Site Setup Cost per Site (£): <input type="number" id="siteSetupCost" value="5000" /></label><br>
-    <label>🏢 Include Facilities/Overhead (25%)? <input type="checkbox" id="includeOverhead" checked /></label><br><br>
+                <!-- (Input fields follow here...) -->
+                <label>🎯 Target Participants: <input type="number" id="targetParticipants" value="100" /></label><br>
+                <label>🕐 Recruitment Duration (months): <input type="number" id="recruitmentMonths" value="10" /></label><br>
+                <label>💸 Staff Cost per Month (£): <input type="number" id="staffCostPerMonth" value="5000" /></label><br>
+                <label>👥 Staff Time (FTE): <input type="number" step="0.1" id="fte" value="1.0" /></label><br>
+                <label>🧪 Screen Failure Rate (%): <input type="number" id="screenFailure" value="40" /></label><br>
+                <label>🧍‍♂️ Drop-out Rate (%): <input type="number" id="dropoutRate" value="15" /></label><br>
+                <label>💷 Incentive per Participant (£): <input type="number" id="incentivePerParticipant" value="50" /></label><br>
+                <label>🏥 Number of Sites: <input type="number" id="siteCount" value="1" /></label><br>
+                <label>🧾 Site Setup Cost per Site (£): <input type="number" id="siteSetupCost" value="5000" /></label><br>
+                <label>🏢 Include Facilities/Overhead (25%)? <input type="checkbox" id="includeOverhead" checked /></label><br><br>
 
-    <button onclick="calculateMain()">Calculate Recruitment Costs</button><br><br>
-  <div id="reportContent">
-    <div id="mainResult"></div>
-    <div id="costBreakdown" style="margin-top:20px;"></div>
+    
 
-    <div id="roiSection" style="display:none;margin-top:40px;">
-      <h3>Explore Media Investment Impact</h3>
-      <label>🎬 One-off Media Investment (£):
-        <select id="investment">
-          <option value="2000">£2,000</option>
-          <option value="3000" selected>£3,000</option>
-          <option value="4000">£4,000</option>
-        </select>
-      </label><br>
-      <label>📈 Media Impact (% Faster Recruitment):
-        <select id="impact">
-          <option value="0.05">Minimal (5%)</option>
-          <option value="0.10">Conservative (10%)</option>
-          <option value="0.15" selected>Moderate (15%)</option>
-          <option value="0.25">Optimistic (25%)</option>
-        </select>
-      </label><br><br>
+                <button onclick="calculateMain()">Calculate Recruitment Costs</button><br><br>
 
-      <button onclick="calculateROI()">Calculate ROI & Show Graph</button><br><br>
-      <div id="roiResult"></div>
-      <canvas id="timelineChart" width="700" height="400" style="margin-top:20px;"></canvas>
-      <div id="scenarioTable" style="margin-top:20px;"></div>
-       <h2>📥 Download Your Report 9</h2>
-    <button onclick="downloadPDF()">Download PDF</button>
+                <div id="mainResult"></div>
+                <div id="costBreakdown" style="margin-top:20px;"></div>
+
+                <div id="roiSection" style="display:none;margin-top:40px;">
+                    <!-- <h3 class="page-break-before">Explore Media Investment Impact</h3> -->
+                    <h3>Explore Media Investment Impact</h3>
+                    <label>🎬 One-off Media Investment (£):
+                        <select id="investment">
+                            <option value="2000">£2,000</option>
+                            <option value="3000" selected>£3,000</option>
+                            <option value="4000">£4,000</option>
+                        </select>
+                    </label><br>
+                    <label>📈 Media Impact (% Faster Recruitment):
+                        <select id="impact">
+                            <option value="0.05">Minimal (5%)</option>
+                            <option value="0.10">Conservative (10%)</option>
+                            <option value="0.15" selected>Moderate (15%)</option>
+                            <option value="0.25">Optimistic (25%)</option>
+                        </select>
+                    </label><br><br>
+
+                    <button onclick="calculateROI()">Calculate ROI & Show Graph</button><br><br>
+                    <div id="roiResult"></div>
+                    <canvas id="timelineChart" width="700" height="400" style="margin-top:20px;"></canvas>
+                    <div id="scenarioTable" style="margin-top:20px;"></div>
+                </div>
+      
+    
+        <!-- Below is out div for the print container -->
     </div>
-    </div>
+    <!-- Button to trigger the PDF download -->
+    <button id="downloadBtn">Download PDF</button>
 
-   
+    <!-- You could have other calculator content here -->
   </div>
 
+  <!-- Load the external JavaScript file -->
   <script src="script.js"></script>
-  <button onclick="downloadPDF()">TEST Download PDF</button>
-  <script>
-  function downloadPDF() {
-    console.log("downloadPDF triggered");
-
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = `
-      <div style="font-family: Arial; padding: 20px;">
-        <h1>Hello Adam</h1>
-        <p>This is a working test from your calculator environment.</p>
-      </div>
-    `;
-
-    document.body.appendChild(tempDiv);
-
-    html2pdf().from(tempDiv).set({
-      filename: 'Hello_Adam.pdf',
-      margin: 10,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).save().then(() => {
-      console.log("PDF generated");
-      document.body.removeChild(tempDiv);
-    }).catch(err => {
-      console.error("PDF generation error:", err);
-    });
-  }
-</script>
-
 </body>
 </html>
