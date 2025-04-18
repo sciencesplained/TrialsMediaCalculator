@@ -29,24 +29,44 @@ input {
 }
 
 
-/* Banner container */
+/* ensure banner is the positioning context */
 .banner {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 4px solid #000080;      /* thick top line */
-  border-bottom: 4px solid #000080;   /* thick bottom line */
-  padding: 10px 15px;              /* vertical + horizontal padding */
-  margin-bottom: 20px;             /* space below banner */
-  background: #f9f9f9;             /* optional subtle background */
+  border-top: 4px solid #000080;
+  border-bottom: 4px solid #000080;
+  padding: 10px 15px;
+  background: #f9f9f9;
 }
 
-/* Title inside banner */
+/* keep your existing title styling */
 .banner-title {
   color: #000080;
-  font-size: 20px;                 /* adjust to taste */
-  margin: 0;                       /* remove default h1 margin */
+  font-size: 20px;
+  margin: 0;
   font-weight: bold;
+  line-height: 1;
+}
+
+/* container for title+link (flex just to stack them) */
+.banner-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* absolutely position the small link at the bottom‑left */
+.banner-link {
+  position: absolute;
+  left: 15px;        /* match the banner’s horizontal padding */
+  bottom: 10px;      /* match the banner’s vertical padding */
+  font-size: 10px;   /* small font */
+  color: #000080;
+  text-decoration: none;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /* Logo in banner */
