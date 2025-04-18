@@ -81,7 +81,8 @@ function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCost
     </tr>`;
   }).join("");
 
-  document.getElementById("scenarioTable").innerHTML = `
+  // Build the table HTML
+  const tableHTML = `
     <h4>📊 Scenario Comparison Table</h4>
     <table style="width:100%;border-collapse:collapse;text-align:left;">
       <thead>
@@ -97,6 +98,21 @@ function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCost
       <tbody>${rows}</tbody>
     </table>
   `;
+
+  // Your “check out” line, with a pointing‑finger emoji
+  const linkHTML = `
+    <p style="margin-top:16px;">
+      Check out some participant information videos for clinical trials here 
+      <span role="img" aria-label="pointing finger">👉</span> 
+      <a href="https://www.sciencesplained.com/participant-information-recruitment-video" target="_blank">
+        Our Examples
+      </a>
+    </p>
+  `;
+
+  // Inject both into your container
+  const container = document.getElementById("scenarioTable");
+  container.innerHTML = tableHTML + linkHTML;
 }
 function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
   const ctx = document.getElementById('timelineChart').getContext('2d');
@@ -205,33 +221,35 @@ function drawChart(baseDurations, baseCosts, mediaDurations, mediaCosts, savings
   });
 }
 
-function downloadPDF() {
-  // Create a temporary container with visible content
-  const tempContainer = document.createElement('div');
-  tempContainer.style.fontFamily = 'Arial, sans-serif';
-  tempContainer.style.padding = '20px';
-  tempContainer.style.backgroundColor = '#fff'; // white background for PDF
-  tempContainer.innerHTML = `
-    <h1>Hello Adam</h1>
-    <p>This is a test of the PDF generation inside the calculator environment.</p>
-  `;
-  
-  // Append it to the body so html2pdf can capture it
-  document.body.appendChild(tempContainer);
-  
-  // Use html2pdf to generate the PDF from the temporary container
-  html2pdf().from(tempContainer).set({
-    filename: 'Hello_Adam.pdf',
-    margin: 10,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).save().then(() => {
-    // Remove the temporary container after saving
-    document.body.removeChild(tempContainer);
-    console.log("PDF generated with content: 'Hello Adam'");
-  }).catch((error) => {
-    console.error("Error generating PDF:", error);
-  });
-}
 
+
+document.addEventListener("DOMContentLoaded", function () {
+  const downloadBtn = document.getElementById("downloadBtn");
+  downloadBtn.addEventListener("click", () => {
+      // 1) Bring everything into view
+      window.scrollTo(0, 0);
+      document.getElementById("roiSection").style.display = "block";
+    
+      const element = document.getElementById("reportContent");
+      html2pdf()
+        .set({
+          margin:       10,
+          filename:     'Recruitment_Summary.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  {
+            scale:      2,
+            useCORS:    true,
+            scrollY:    0      // <-- lock capture to top of element
+          },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak:    {
+            mode: ['css', 'legacy'],  // respect any CSS page-break rules
+            before: '.page-break-before'      // also force before this selector
+          }
+        })
+        .from(element)
+        .save()
+        .catch(err => console.error("PDF error:", err));
+    });
+    
+});
