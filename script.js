@@ -68,9 +68,20 @@ function calculateROI() {
   const boost = parseFloat(document.getElementById('impact').value);
 
   const baseDuration = months;
-  const extensionCosts = [0, 6000, 18000];
-  const extendedDurations = [baseDuration, baseDuration + 1, baseDuration + 3];
-  const noMediaCosts = extendedDurations.map((d, i) => d * staffCost * fte + extensionCosts[i]);
+
+const overheadMultiplier = includeOverhead ? 1.25 : 1.0;
+const costPerExtensionMonth = staffCost * fte * overheadMultiplier;
+
+// generate the three scenarios: 0, 1, and 3 months overrun
+const overrunMonths = [0, 1, 3];
+const extensionCosts = overrunMonths.map(m => Math.round(costPerExtensionMonth * m));
+const extendedDurations = overrunMonths.map(m => baseDuration + m);
+
+const noMediaCosts = extendedDurations.map((d, i) =>
+  d * staffCost * fte + extensionCosts[i]);
+
+    
+    
   const withMediaDurations = extendedDurations.map(d => d / (1 + boost));
   const withMediaCosts = withMediaDurations.map(d => d * staffCost * fte + investment);
   const savings = noMediaCosts.map((cost, i) => cost - withMediaCosts[i]);
