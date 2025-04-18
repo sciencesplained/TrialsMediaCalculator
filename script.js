@@ -1,3 +1,17 @@
+// At top of your script
+let hasCalculatedMain = false;
+let hasCalculatedROI  = false;
+const downloadBtn     = document.getElementById('downloadBtn');
+
+// Ensure it’s hidden on load (just in case CSS/HTML isn’t enough)
+downloadBtn.style.display = 'none';
+// Helper: show the download button once both calculations have run
+function tryRevealDownload() {
+    if (hasCalculatedMain && hasCalculatedROI) {
+      downloadBtn.style.display = 'inline-block';
+    }
+  }
+
 function calculateMain() {
   const target = parseFloat(document.getElementById('targetParticipants').value);
   const months = parseFloat(document.getElementById('recruitmentMonths').value);
@@ -41,6 +55,9 @@ function calculateMain() {
   `;
 
   document.getElementById("roiSection").style.display = "block";
+      // mark this step done & maybe immediately reveal if ROI was already done
+    hasCalculatedMain = true;
+    tryRevealDownload();
 }
 
 function calculateROI() {
@@ -66,6 +83,9 @@ function calculateROI() {
   renderScenarioTable(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
   console.log("Chart drawing initiating");
   drawChart(extendedDurations, noMediaCosts, withMediaDurations, withMediaCosts, savings);
+      // mark this step done & reveal if main calc was already done
+    hasCalculatedROI = true;
+    tryRevealDownload();
 }
 
 function renderScenarioTable(baseDurations, baseCosts, mediaDurations, mediaCosts, savings) {
