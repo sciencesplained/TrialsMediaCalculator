@@ -6,3 +6,75 @@ body {
 input {
   margin-bottom: 10px;
 }
+
+#reportContent {
+  border: 1px solid #862222;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 600px;
+  min-height: 200px;
+  background: white;
+  box-sizing: border-box;  /* include padding and border in height/width calculations */
+  overflow: visible !important;
+  height: auto !important;
+  line-height: 1.3;
+  font-size: 10pt !important;
+}
+
+.page-break-before {
+  /* for modern browsers/html2canvas: */
+  break-before: page !important;
+  /* for legacy support: */
+  page-break-before: always !important;
+}
+
+
+/* Banner container */
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 4px solid #000080;      /* thick top line */
+  border-bottom: 4px solid #000080;   /* thick bottom line */
+  padding: 10px 15px;              /* vertical + horizontal padding */
+  margin-bottom: 20px;             /* space below banner */
+  background: #f9f9f9;             /* optional subtle background */
+}
+
+/* Title inside banner */
+.banner-title {
+  color: #000080;
+  font-size: 20px;                 /* adjust to taste */
+  margin: 0;                       /* remove default h1 margin */
+  font-weight: bold;
+}
+
+/* Logo in banner */
+.banner-logo {
+  height: auto;                    /* scale to fit the banner */
+  /* width: auto;  let aspect ratio stay intact */
+}
+
+/* Headings */
+#reportContent h3 { font-size: 14pt; }
+#reportContent h4 { font-size: 12pt; }
+
+/* Paragraphs and list items */
+#reportContent p,
+#reportContent li { font-size: 10pt; }
+
+
+/* Override any print-specific layout rules */
+@media print {
+  #reportContent {
+    height: auto !important;
+    overflow: visible !important;
+    font-size: 6pt !important; 
+    line-height: 1.3 !important; 
+  }
+  #reportContent h3 { font-size: 10pt !important; }
+  #reportContent h4 { font-size: 8pt !important; }
+  #reportContent p,
+  #reportContent li { font-size: 6pt !important; }
+}
+
